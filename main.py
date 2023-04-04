@@ -29,6 +29,7 @@ jesus = pygame.image.load("jesus.png")
 monster = pygame.image.load("monster.png")
 trump = pygame.image.load("trump.png")
 gandhi = pygame.image.load("gandhi.png")
+greta = pygame.image.load("greta_thunberg.png")
 enemy_list = [jesus, monster, gandhi, trump]
 enemy_x_pos = random.randint(64, 736)
 enemy_y_pos = random.randint(20, 150)
@@ -48,7 +49,7 @@ def create_player(x, y):
     screen.blit(player_spaceship, (x, y))
 
 def create_enemy(x, y):
-    screen.blit(gandhi, (x, y) )
+    screen.blit(greta, (x, y) )
 
 def fire_missile(x, y):
     global missile_state
@@ -75,7 +76,8 @@ while running:
             if event.key == pygame.K_RIGHT:
                 player_x_pos_change = 5
             if event.key == pygame.K_SPACE:
-                fire_missile(player_x_pos, missile_y_pos)
+                missile_x_pos = player_x_pos
+                fire_missile(missile_x_pos, missile_y_pos)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player_x_pos_change = 0
@@ -99,8 +101,11 @@ while running:
         enemy_y_pos += enemy_y_pos_change
 
     # Missile movement
+    if missile_y_pos <= 0:
+        missile_y_pos = 480
+        missile_state = "ready"
     if missile_state is "fire":
-        fire_missile(player_x_pos, missile_y_pos)
+        fire_missile(missile_x_pos, missile_y_pos)
         missile_y_pos -= missile_y_pos_change
 
     create_player(player_x_pos, player_y_pos)

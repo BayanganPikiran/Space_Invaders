@@ -1,3 +1,4 @@
+import math
 import pygame
 import random
 
@@ -31,8 +32,8 @@ trump = pygame.image.load("trump.png")
 gandhi = pygame.image.load("gandhi.png")
 greta = pygame.image.load("greta_thunberg.png")
 enemy_list = [jesus, monster, gandhi, trump]
-enemy_x_pos = random.randint(64, 736)
-enemy_y_pos = random.randint(20, 150)
+enemy_x_pos = random.randint(64, 735)
+enemy_y_pos = random.randint(50, 180)
 enemy_x_pos_change = 2.5
 enemy_y_pos_change = 40
 
@@ -41,8 +42,10 @@ missile = pygame.image.load("missile.png")
 missile_x_pos = 0
 missile_y_pos = 480
 missile_x_pos_change = 0
-missile_y_pos_change = 10
+missile_y_pos_change = 20
 missile_state = "ready"
+
+score = 0
 
 
 def create_player(x, y):
@@ -56,6 +59,12 @@ def fire_missile(x, y):
     missile_state = "fire"
     screen.blit(missile, (x+16, y+10))
 
+def detect_collision(enemy_x, enemy_y, missile_x, missile_y):
+    distance = math.sqrt(math.pow(enemy_x- missile_x, 2) + math.pow(enemy_y - missile_y, 2))
+    if distance < 27:
+        return True
+    else:
+        return False
 
 
 
@@ -107,6 +116,17 @@ while running:
     if missile_state is "fire":
         fire_missile(missile_x_pos, missile_y_pos)
         missile_y_pos -= missile_y_pos_change
+
+    # Collision
+    collision = detect_collision(enemy_x_pos, enemy_y_pos, missile_x_pos, missile_y_pos)
+    if collision:
+        missile_y_pos = 480
+        missile_state = "ready"
+        score += 1
+        print(score)
+        enemy_x_pos = random.randint(64, 735)
+        enemy_y_pos = random.randint(50, 180)
+
 
     create_player(player_x_pos, player_y_pos)
     create_enemy(enemy_x_pos, enemy_y_pos)

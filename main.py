@@ -22,6 +22,14 @@ outerspace = pygame.image.load("outerspace.png")
 mixer.music.load("space_oddity.wav")
 mixer.music.play(-1)
 
+#Collision sounds
+# all_wrong = mixer.Sound("this_all_wrong.wav")
+# should_not_be_here = mixer.Sound("shouldnt_be_up_here.wav")
+# in_school = mixer.Sound("in_school.wav")
+# my_dreams = mixer.Sound("my_dreams.wav")
+how_dare = mixer.Sound("how_dare_you.wav")
+
+
 #Player
 player_spaceship = pygame.image.load("spaceship.png")
 player_x_pos = 370
@@ -64,7 +72,7 @@ missile_state = "ready"
 score_value = 0
 font = pygame.font.Font("zai_CourierPolski1941.ttf", 46)
 
-score_pos_x = 325
+score_pos_x = 290
 score_pos_y = 10
 
 def show_score(x, y):
@@ -74,7 +82,7 @@ def create_player(x, y):
     screen.blit(player_spaceship, (x, y))
 
 def create_enemy(x, y):
-    screen.blit(jesus, (x, y))
+    screen.blit(greta, (x, y))
 
 def fire_missile(x, y):
     global missile_state
@@ -87,8 +95,6 @@ def detect_collision(enemy_x, enemy_y, missile_x, missile_y):
         return True
     else:
         return False
-
-
 
 
 #Game loop
@@ -107,6 +113,8 @@ while running:
             if event.key == pygame.K_RIGHT:
                 player_x_pos_change = 5
             if event.key == pygame.K_SPACE:
+                missile_sound = mixer.Sound("laser.wav")
+                missile_sound.play()
                 missile_x_pos = player_x_pos
                 fire_missile(missile_x_pos, missile_y_pos)
         if event.type == pygame.KEYUP:
@@ -137,6 +145,8 @@ while running:
         if collision:
             missile_y_pos = 480
             missile_state = "ready"
+            how_dare_you = mixer.Sound("how_dare_you.wav")
+            how_dare_you.play()
             score_value += 1
             enemy_x_pos[i] = random.randint(64, 735)
             enemy_y_pos[i] = random.randint(50, 180)

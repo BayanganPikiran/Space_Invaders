@@ -1,6 +1,7 @@
 import math
 import pygame
 import random
+from pygame import mixer
 
 pygame.init()
 
@@ -16,6 +17,10 @@ pygame.display.set_icon(alien_icon)
 
 #Background
 outerspace = pygame.image.load("outerspace.png")
+
+#Background sound
+mixer.music.load("space_oddity.wav")
+mixer.music.play(-1)
 
 #Player
 player_spaceship = pygame.image.load("spaceship.png")

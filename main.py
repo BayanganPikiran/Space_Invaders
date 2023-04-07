@@ -12,26 +12,26 @@ screen = pygame.display.set_mode(SCREEN_DIM)
 
 #Caption and Icon
 pygame.display.set_caption("Space Invaders")
-alien_icon = pygame.image.load("alien.png")
+alien_icon = pygame.image.load("graphics/alien.png")
 pygame.display.set_icon(alien_icon)
 
 #Background
-outerspace = pygame.image.load("outerspace.png")
+outerspace = pygame.image.load("graphics/outerspace.png")
 
 #Background sound
-mixer.music.load("space_oddity.wav")
+mixer.music.load("sounds/space_oddity.wav")
 mixer.music.play(-1)
 
 
 #Player
-player_spaceship = pygame.image.load("spaceship.png")
+player_spaceship = pygame.image.load("graphics/spaceship.png")
 player_x_pos = 370
 player_y_pos = 500
 player_x_pos_change = 0
 
 #Create enemies
 
-greta = pygame.image.load("greta_thunberg.png")
+greta = pygame.image.load("graphics/greta_thunberg.png")
 enemy_list = []
 
 enemy_image = []
@@ -40,16 +40,17 @@ enemy_y_pos = []
 enemy_x_pos_change = []
 enemy_y_pos_change = []
 num_of_enemies = 6
+enemy_speed = 1
 
 for i in range(num_of_enemies):
     enemy_image.append(enemy_list)
     enemy_x_pos.append(random.randint(64, 735))
-    enemy_y_pos.append(random.randint(50, 180))
+    enemy_y_pos.append(random.randint(50, 100))
     enemy_x_pos_change.append(2.5)
     enemy_y_pos_change.append(40)
 
 #Create missile
-missile = pygame.image.load("missile.png")
+missile = pygame.image.load("graphics/missile.png")
 missile_x_pos = 0
 missile_y_pos = 480
 missile_x_pos_change = 0
@@ -103,11 +104,11 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player_x_pos_change = -5
+                player_x_pos_change = -7
             if event.key == pygame.K_RIGHT:
-                player_x_pos_change = 5
+                player_x_pos_change = 7
             if event.key == pygame.K_SPACE:
-                missile_sound = mixer.Sound("laser.wav")
+                missile_sound = mixer.Sound("sounds/laser.wav")
                 missile_sound.play()
                 missile_x_pos = player_x_pos
                 fire_missile(missile_x_pos, missile_y_pos)
@@ -128,17 +129,18 @@ while running:
     for i in range(num_of_enemies):
 
         #Game over
-        if enemy_y_pos[i] > 450:
+        if enemy_y_pos[i] > 440:
             for n in range(num_of_enemies):
                 enemy_y_pos[n] = 1000
             game_over()
+            break
 
         enemy_x_pos[i] += enemy_x_pos_change[i]
         if enemy_x_pos[i] <= 0:
-            enemy_x_pos_change[i] = 2.5
+            enemy_x_pos_change[i] = enemy_speed
             enemy_y_pos[i] += enemy_y_pos_change[i]
         elif enemy_x_pos[i] >= 736:
-            enemy_x_pos_change[i] = -2.5
+            enemy_x_pos_change[i] = -enemy_speed
             enemy_y_pos[i] += enemy_y_pos_change[i]
 
         # Collision
@@ -146,9 +148,10 @@ while running:
         if collision:
             missile_y_pos = 480
             missile_state = "ready"
-            how_dare_you = mixer.Sound("how_dare_you.wav")
+            how_dare_you = mixer.Sound("sounds/how_dare_you.wav")
             how_dare_you.play()
             score_value += 1
+            enemy_speed += 0.05
             enemy_x_pos[i] = random.randint(64, 735)
             enemy_y_pos[i] = random.randint(50, 180)
         create_enemy(enemy_x_pos[i], enemy_y_pos[i])
@@ -157,7 +160,7 @@ while running:
     if missile_y_pos <= 0:
         missile_y_pos = 480
         missile_state = "ready"
-    if missile_state is "fire":
+    if missile_state == "fire":
         fire_missile(missile_x_pos, missile_y_pos)
         missile_y_pos -= missile_y_pos_change
 

@@ -31,11 +31,21 @@ monster = pygame.image.load("monster.png")
 trump = pygame.image.load("trump.png")
 gandhi = pygame.image.load("gandhi.png")
 greta = pygame.image.load("greta_thunberg.png")
-enemy_list = [jesus, monster, gandhi, trump]
-enemy_x_pos = random.randint(64, 735)
-enemy_y_pos = random.randint(50, 180)
-enemy_x_pos_change = 2.5
-enemy_y_pos_change = 40
+enemy_list = [jesus, monster, gandhi, trump, greta]
+
+enemy_image = []
+enemy_x_pos = []
+enemy_y_pos = []
+enemy_x_pos_change = []
+enemy_y_pos_change = []
+num_of_enemies = 6
+
+for i in range(num_of_enemies):
+    enemy_image.append(random.choice(enemy_list))
+    enemy_x_pos.append(random.randint(64, 735))
+    enemy_y_pos.append(random.randint(50, 180))
+    enemy_x_pos_change.append(2.5)
+    enemy_y_pos_change.append(40)
 
 #Create missile
 missile = pygame.image.load("missile.png")
@@ -45,14 +55,21 @@ missile_x_pos_change = 0
 missile_y_pos_change = 20
 missile_state = "ready"
 
-score = 0
+#Score
+score_value = 0
+font = pygame.font.Font("zai_CourierPolski1941.ttf", 46)
 
+score_pos_x = 325
+score_pos_y = 10
 
+def show_score(x, y):
+    score = font.render("Score: " + str(score_value), True, (255, 255, 255))
+    screen.blit(score, (x, y))
 def create_player(x, y):
     screen.blit(player_spaceship, (x, y))
 
 def create_enemy(x, y):
-    screen.blit(greta, (x, y) )
+    screen.blit(jesus, (x, y))
 
 def fire_missile(x, y):
     global missile_state
@@ -101,13 +118,24 @@ while running:
         player_x_pos = 736
 
     #Enemy Movement
-    enemy_x_pos += enemy_x_pos_change
-    if enemy_x_pos <= 0:
-        enemy_x_pos_change = 2.5
-        enemy_y_pos += enemy_y_pos_change
-    elif enemy_x_pos >= 736:
-        enemy_x_pos_change = -2.5
-        enemy_y_pos += enemy_y_pos_change
+    for i in range(num_of_enemies):
+        enemy_x_pos[i] += enemy_x_pos_change[i]
+        if enemy_x_pos[i] <= 0:
+            enemy_x_pos_change[i] = 2.5
+            enemy_y_pos[i] += enemy_y_pos_change[i]
+        elif enemy_x_pos[i] >= 736:
+            enemy_x_pos_change[i] = -2.5
+            enemy_y_pos[i] += enemy_y_pos_change[i]
+
+        # Collision
+        collision = detect_collision(enemy_x_pos[i], enemy_y_pos[i], missile_x_pos, missile_y_pos)
+        if collision:
+            missile_y_pos = 480
+            missile_state = "ready"
+            score_value += 1
+            enemy_x_pos[i] = random.randint(64, 735)
+            enemy_y_pos[i] = random.randint(50, 180)
+        create_enemy(enemy_x_pos[i], enemy_y_pos[i])
 
     # Missile movement
     if missile_y_pos <= 0:
@@ -117,19 +145,12 @@ while running:
         fire_missile(missile_x_pos, missile_y_pos)
         missile_y_pos -= missile_y_pos_change
 
-    # Collision
-    collision = detect_collision(enemy_x_pos, enemy_y_pos, missile_x_pos, missile_y_pos)
-    if collision:
-        missile_y_pos = 480
-        missile_state = "ready"
-        score += 1
-        print(score)
-        enemy_x_pos = random.randint(64, 735)
-        enemy_y_pos = random.randint(50, 180)
+
 
 
     create_player(player_x_pos, player_y_pos)
-    create_enemy(enemy_x_pos, enemy_y_pos)
+    show_score(score_pos_x, score_pos_y)
+
 
     pygame.display.update()
 # Press the green button in the gutter to run the script.
